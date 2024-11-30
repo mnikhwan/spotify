@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Spotify Status</title>
+  <!-- Google Fonts - Inter -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <!-- CDN TailwindCSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- CDN Aceternity UI -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aceternity-ui/dist/aceternity.min.css">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif; /* Menggunakan font Inter */
+      background-color: #1e293b; /* Fallback Dark Mode Background */
+      color: #e2e8f0; /* Light text for contrast */
+    }
+    #album-cover {
+      display: none; /* Album cover default disembunyikan */
+    }
+  </style>
+</head>
+<body class="relative flex items-center justify-center min-h-screen bg-gray-900 text-white">
+  
+  <!-- Aurora Background -->
+  <div class="absolute inset-0 -z-10">
+    <div class="aurora-background"></div>
+  </div>
+
+  <!-- Spotify Status Card -->
+  <div class="card bg-gray-800 text-white shadow-lg rounded-lg p-6 w-100">
+    <header class="flex items-center mb-4">
+      <img src="https://cdn.discordapp.com/avatars/323017866867900416/b78ccaf4f4862d483b60c0c49bdace14.png?size=64" alt="Spotify Logo" class="w-12 h-12 rounded-full">
+      <div class="ml-4">
+        <h2 id="nama" class="text-lg font-bold">Spotify Status</h2>
+	<span class="flex gap-2">
+		<svg width="18px" height="18px" viewBox="0 0 48 48" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    
+    <title>Spotify-color</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+
+</defs>
+    <g id="Icons" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Color-" transform="translate(-200.000000, -460.000000)" fill="#00DA5A">
+            <path d="M238.16,481.36 C230.48,476.8 217.64,476.32 210.32,478.6 C209.12,478.96 207.92,478.24 207.56,477.16 C207.2,475.96 207.92,474.76 209,474.4 C217.52,471.88 231.56,472.36 240.44,477.64 C241.52,478.24 241.88,479.68 241.28,480.76 C240.68,481.6 239.24,481.96 238.16,481.36 M237.92,488.08 C237.32,488.92 236.24,489.28 235.4,488.68 C228.92,484.72 219.08,483.52 211.52,485.92 C210.56,486.16 209.48,485.68 209.24,484.72 C209,483.76 209.48,482.68 210.44,482.44 C219.2,479.8 230,481.12 237.44,485.68 C238.16,486.04 238.52,487.24 237.92,488.08 M235.04,494.68 C234.56,495.4 233.72,495.64 233,495.16 C227.36,491.68 220.28,490.96 211.88,492.88 C211.04,493.12 210.32,492.52 210.08,491.8 C209.84,490.96 210.44,490.24 211.16,490 C220.28,487.96 228.2,488.8 234.44,492.64 C235.28,493 235.4,493.96 235.04,494.68 M224,460 C210.8,460 200,470.8 200,484 C200,497.2 210.8,508 224,508 C237.2,508 248,497.2 248,484 C248,470.8 237.32,460 224,460" id="Spotify">
+
+</path>
+        </g>
+    </g>
+</svg>
+
+        <p class="text-sm text-gray-400">Now Playing</p>
+	</span>
+
+      </div>
+    </header>
+    <div class="flex flex-col items-start">
+      <!-- Song Information -->
+      <div>
+        <p id="song-title" class="text-xl font-semibold">No Song Playing</p>
+        <p id="artist-name" class="text-sm text-gray-400">Artist</p>
+      </div>
+      <!-- Placeholder for Album Cover -->
+      <img id="album-cover" src="https://via.placeholder.com/128" alt="Album Cover" class="w-80 h-auto rounded-lg mt-4">
+    </div>
+  </div>
+
+  <!-- JavaScript -->
+  <script>
+    // Discord User ID
+    const userId = "323017866867900416"; // Ganti dengan Discord User ID Anda
+    const apiUrl = `https://api.lanyard.rest/v1/users/${userId}`;
+
+    // Update Spotify Status
+    async function updateSpotifyStatus() {
+      try {
+        const response = await fetch(apiUrl);
+        const { data } = await response.json();
+      
+        const namaspo = document.getElementById("nama");
+        const songTitle = document.getElementById("song-title");
+        const artistName = document.getElementById("artist-name");
+        const albumCover = document.getElementById("album-cover");
+
+        const { username } = data.discord_user;
+        namaspo.textContent = username + " Spotify";
+      
+        if (data.listening_to_spotify) {
+          const { song, artist, album_art_url } = data.spotify;
+          songTitle.textContent = song; // Update song title
+          artistName.textContent = artist; // Update artist name
+          albumCover.src = album_art_url; // Update album cover
+          albumCover.style.display = "block"; // Tampilkan album cover
+        } else {
+          songTitle.textContent = "No Song Playing";
+          artistName.textContent = "Artist";
+          albumCover.style.display = "none"; // Sembunyikan album cover
+        }
+      } catch (error) {
+        console.error("Error fetching Spotify status:", error);
+      }
+    }
+
+    // Real-time updates every 5 seconds
+    setInterval(updateSpotifyStatus, 5000);
+    updateSpotifyStatus(); // Initial call
+  </script>
+</body>
+</html>
